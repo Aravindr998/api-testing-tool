@@ -12,7 +12,7 @@ const ApiRequestField = ({ handleApiCall, res }) => {
     const [response, setResponse] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [jsonBody, setJsonBody] = useState("")
-    const [error, setError] = useState("Invalid Json")
+    const [error, setError] = useState("")
 
     useEffect(() => {
         if (res) {
