@@ -48,11 +48,9 @@ const ApiRequestField = ({ handleApiCall, res }) => {
                 }
                 return acc
             }, {})
-            if (bodyType === "json") {
+            if (bodyType === "json" && jsonBody) {
                 requestBody = JSON.parse(jsonBody)
             }
-            console.log(requestBody)
-            console.log(formData.get("url"), formData.get("method"), requestHeaders, requestBody)
             const response = await handleApiCall({
                 url: formData.get("url"),
                 method: formData.get("method"),
@@ -136,9 +134,21 @@ const ApiRequestField = ({ handleApiCall, res }) => {
         });
         monaco.editor.setTheme("onedark")
     }
-    const handleEditorChange = (value, evet) => {
+    const handleEditorChange = (value, event) => {
         setError("")
         setJsonBody(value)
+    }
+
+    const getBackgroundClass = () => {
+        const statusCode = response?.status?.toString()
+        console.log(statusCode)
+        if (statusCode.startsWith("2")) {
+            return "bg-green-500"
+        } else if (statusCode.startsWith("3")) {
+            return "bg-orange-500"
+        } else {
+            return "bg-red-500"
+        }
     }
     return (
         <div className='md:w-6/12 w-full md:text-md text-xs'>
@@ -216,7 +226,12 @@ const ApiRequestField = ({ handleApiCall, res }) => {
                     {isLoading && <div className='absolute top-0 right-0 left-0 bottom-0 flex justify-center align bg-blue-900 bg-opacity-35 backdrop-blur-sm'>
                         <img className='absolute top-2/4 right-2/4 translate-x-2/4 -translate-y-2/4 w-20 ' src='/loader.gif' />
                     </div>}
-                    {response && <pre className='text-sm' dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(response, undefined, 4)) }} />}
+                    {response && <>
+                        <div>
+                            <p className={`w-full p-1 ${getBackgroundClass()} bg-opacity-35`}>Status: <span>{response.status}</span></p>
+                        </div>
+                        <pre className='text-sm' dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(response.response, undefined, 4)) }} />
+                    </>}
                 </div>
             </div>
         </div>
